@@ -6,15 +6,21 @@ project("Vulkan Turorial")
 find_package(glfw3 3.3 REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(X11 REQUIRED)
+find_package(glm REQUIRED)
 
+set(BIN ${CMAKE_SOURCE_DIR}/artifacts/bin)
 set(SRC ${CMAKE_SOURCE_DIR}/src)
+set(SHADERS ${CMAKE_SOURCE_DIR}/shaders)
+set(SHADERS_DIR ${BIN}/shaders)
 file(GLOB_RECURSE SOURCE ${SRC}/*.cpp ${SRC}/**/*.cpp)
 file(GLOB_RECURSE HEADERS ${SRC}/*.hpp ${SRC}/**/*.hpp)
 
-add_compile_options(-Wall -Wextra -pedantic -Werror -std=c++20)
+add_subdirectory(shaders)
+
+add_compile_options(-Wall -Wextra -pedantic -Werror -std=c++20 -DDEBUG)
+add_definitions( -DSHADERS_DIR="${SHADERS_DIR}" )
 add_executable(VulkanTemplate ${SOURCE} ${HEADERS})
-
+add_dependencies(VulkanTemplate VulkanTemplateShaders)
 target_include_directories(VulkanTemplate PRIVATE ${SRC})
-target_link_libraries(VulkanTemplate glfw vulkan dl pthread Xxf86vm Xrandr Xi fmt)
-
-set_target_properties(VulkanTemplate PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/artifacts/bin)
+target_link_libraries(VulkanTemplate glfw vulkan dl pthread Xxf86vm Xrandr Xi fmt glm::glm)
+set_target_properties(VulkanTemplate PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BIN})

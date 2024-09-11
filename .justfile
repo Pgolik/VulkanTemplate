@@ -6,19 +6,16 @@ alias r := run
 
 build_dir := "./build/"
 source_dir := "."
-bin_dir := "./artifacts/bin/"
 
 build:
     #!/usr/bin/env bash
-    if [ ! -f {{build_dir}} ]; then
-        mkdir {{build_dir}}
-    fi
-    cmake -S {{source_dir}} -B {{build_dir}} -G Ninja
-    cd {{build_dir}}
-    ninja
+    cmake -S {{source_dir}} -B {{build_dir}}
+    pushd {{build_dir}}
+    make all -j$(nproc)
+    popd
 
 clean:
     rm -r {{build_dir}}*
 
 run:
-    {{bin_dir}}VulkanTemplate
+    {{source_dir}}/artifacts/bin/VulkanTemplate

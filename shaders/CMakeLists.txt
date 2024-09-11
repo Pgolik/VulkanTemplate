@@ -1,0 +1,20 @@
+file(GLOB_RECURSE FRAGMENT_SHADERS ${SHADERS}/*.frag ${SHADERS}/**/*.frag)
+file(GLOB_RECURSE VERTEX_SHADERS ${SHADERS}/*.vert ${SHADERS}/**/*.vert)
+
+set(SHADER_COMMANDS)
+set(SHADER_PRODUCTS)
+
+foreach(SHADER_SOURCE IN LISTS FRAGMENT_SHADERS VERTEX_SHADERS)
+    cmake_path(GET SHADER_SOURCE FILENAME SHADER_NAME)
+    list(APPEND SHADER_COMMAND COMMAND Vulkan::glslc ${SHADER_SOURCE} -o ${SHADERS_DIR}/${SHADER_NAME}.spv)
+    list(APPEND SHADER_PRODUCTS "${SHADERS_DIR}/${SHADER_NAME}.spv")
+    
+endforeach()
+message(${SHADER_COMMAND})
+
+add_custom_target("VulkanTemplateShaders" ALL
+    ${SHADER_COMMAND}
+    COMMENT "Compiling Shaders [VulkanTemplateShaders]"
+    SOURCES ${SHADER_SOURCE_FILES}
+    BYPRODUCTS ${SHADER_PRODUCTS}
+)
